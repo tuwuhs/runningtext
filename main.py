@@ -39,6 +39,13 @@ def init_logger():
 	
 	logger.info('Logger initialized')
 
+def handle_sms(sms):
+	logger = logging.getLogger(__name__)
+	logger.info(u'== SMS message received ==\nFrom: {0}\nTime: {1}\nMessage:\n{2}'.format(sms.number, sms.time, sms.text))
+	logger.info('Replying to SMS...')
+	sms.reply(u'SMS received: "{0}{1}"'.format(sms.text[:20], '...' if len(sms.text) > 20 else ''))
+	logger.info('SMS sent')
+
 def main():
 	init_logger()
 	logger = logging.getLogger(__name__)
@@ -46,12 +53,17 @@ def main():
 	config = ConfigParser.SafeConfigParser()
 	config.read('app.cfg')
 	modem_port = config.get('modem', 'port')
-	m = modem.GsmModem(modem_port)
+	m = modem.GsmModem(modem_port, smsReceivedCallbackFunc=handle_sms)
 	m.connect()
 	logger.info('Connected GsmModem at port ' + modem_port)
 	logger.info('Modem mfg: ' + m.manufacturer + ' Model: ' + m.model)
-	m.close()
-	logger.info('Closed GsmModem')
+	print('Listening...')
+	try:	
+		while True:
+			pass
+	finally:
+		m.close()
+		logger.info('Closed GsmModem')
 	
 if __name__ == '__main__':
 	main()
