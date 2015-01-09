@@ -3,10 +3,13 @@
 # (c) 2015 Tuwuh Sarwoprasojo
 # All rights reserved.
 
+import ConfigParser
 import errno
 import logging
 import logging.handlers
 import os
+
+import modem
 
 LOG_FILENAME = './log/runningtext.log'
 
@@ -27,7 +30,7 @@ class MyRotatingFileHandler(logging.handlers.RotatingFileHandler):
 def init_logger():
 	formatter = logging.Formatter('%(asctime)s %(name)s %(levelname)s: %(message)s')
 
-	handler = MyRotatingFileHandler(LOG_FILENAME, maxBytes=1024, backupCount=10)
+	handler = MyRotatingFileHandler(LOG_FILENAME, maxBytes=1000000, backupCount=10)
 	handler.setFormatter(formatter)
 	
 	logger = logging.getLogger(__name__) 
@@ -38,6 +41,17 @@ def init_logger():
 
 def main():
 	init_logger()
+	logger = logging.getLogger(__name__)
+
+	config = ConfigParser.SafeConfigParser()
+	config.read('app.cfg')
+	modem_port = config.get('modem', 'port')
+	m = modem.GsmModem(modem_port)
+	m.connect()
+	logger.info('Connected GsmModem at port ' + modem_port)
+	logger.info('Modem mfg: ' + m.manufacturer + ' Model: ' + m.model)
+	m.close()
+	logger.info('Closed GsmModem')
 	
 if __name__ == '__main__':
 	main()
