@@ -11,6 +11,8 @@ class SmsServer(object):
 	def __init__(self, modem_port):
 		self._is_connected = False
 		self._modem = modem.GsmModem(modem_port, smsReceivedCallbackFunc=self.handle_sms)
+		self._command_server = commandserver.CommandServer(self._modem)
+		self._command_server.start()
 		pass
 	
 	def connect(self):
@@ -41,8 +43,9 @@ class SmsServer(object):
 	
 	def handle_sms(self, sms):
 		logger.info('== SMS message received ==\nFrom: {0}\nTime: {1}\nMessage:\n{2}'.format(sms.number, sms.time, sms.text))
-		logger.info('Replying to SMS...')
-		sms.reply('SMS received: "{0}{1}"'.format(sms.text[:20], '...' if len(sms.text) > 20 else ''))
-		logger.info('SMS sent')
+		self._command_server.queue_sms(sms)
+# 		logger.info('Replying to SMS...')
+# 		sms.reply('SMS received: "{0}{1}"'.format(sms.text[:20], '...' if len(sms.text) > 20 else ''))
+# 		logger.info('SMS sent')
 		
 	
