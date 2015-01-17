@@ -17,7 +17,7 @@ class SmsServer(object):
 	
 	def connect(self):
 		logger.info('Connecting GsmModem at port {0}...'.format(self._modem.port))
-		self._modem.connect()		
+		self._modem.connect()
 		logger.info('Connected GsmModem at port {0}'.format(self._modem.port))
 		logger.info('Modem mfg: {0} Model: {1}'.format(self._modem.manufacturer, self._modem.model))
 		logger.info('Waiting for network...')
