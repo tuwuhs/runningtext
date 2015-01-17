@@ -24,6 +24,7 @@ class CommandServer(threading.Thread):
 		self._current_text = ''
 		self._current_color = ''
 		self._pin_code = '1234'
+		self._chkpulsa_ussd = '*388#'
 	
 	def run(self):
 		while True:
@@ -78,10 +79,19 @@ class CommandServer(threading.Thread):
 					if len(new_pin_code) != 4 or not new_pin_code.isdigit():
 						sms.reply('Invalid new PIN. Use 4 digits only.')
 						continue
+					self._pin_code = new_pin_code
+					sms.reply('PIN code changed to ' + self._pin_code)
 				elif command == 'chkpulsa':
 					if pin_code != self._pin_code:
 						sms.reply('Incorrect PIN')
 						continue
+					time.sleep(10) # Put sleep here, otherwise the modem returns with timeout
+					try:
+						u = self._modem.sendUssd(self._chkpulsa_ussd, 30)
+						sms.reply(u.message)
+					except TimeoutException:
+						sms.reply('Timeout')
+					continue
 				elif command == 'readbacktxt':
 					if pin_code != self._pin_code:
 						sms.reply('Incorrect PIN')
