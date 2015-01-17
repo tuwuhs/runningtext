@@ -62,8 +62,9 @@ class CommandServer(threading.Thread):
 					color = (255, 255, 255)
 					data = data_array[1]
 				else:
-					pass
+					color_command = 'r'
 				
+				self._current_color = color_command
 				self._current_text = data.lstrip()
 				self._text_writer.write_text(self._current_text, color, -1)
 				sms.reply(self._current_color + '#' + self._current_text)
