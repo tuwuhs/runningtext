@@ -134,12 +134,15 @@ class CommandServer(threading.Thread):
 
 	def run(self):
 		while True:
-			sms = self._command_queue.get()
-			logger.info('== Processing SMS ==\nFrom: {0}\nTime: {1}\nMessage:\n{2}'.format(sms.number, sms.time, sms.text))
-			
-			reply = self._process_command(sms.text)
-			if reply != None:
-				sms.reply(reply)
+			try:
+				sms = self._command_queue.get()
+				logger.info('== Processing SMS ==\nFrom: {0}\nTime: {1}\nMessage:\n{2}'.format(sms.number, sms.time, sms.text))
+				
+				reply = self._process_command(sms.text)
+				if reply != None:
+					sms.reply(reply)
+			except Exception as err:
+				logger.exception('Exception in CommandServer.run()')
 			
 	def _parse_command(self, text):
 		# Example format: cm*1234#chgpassword#9125
