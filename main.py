@@ -66,9 +66,13 @@ def main():
 	config = ConfigParser.SafeConfigParser()
 	config.read('app.cfg')
 	
-	sn = config.get('system', 'sn')
-	if sn != getserial():
-		print('SN mismatch')
+	try:
+		sn = config.get('system', 'sn')
+		if sn != getserial():
+			print('SN mismatch')
+			exit()
+	except ConfigParser.NoOptionError:
+		print('SN not found')
 		exit()
 	
 	modem_port = config.get('modem', 'port')

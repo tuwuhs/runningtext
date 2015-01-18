@@ -21,8 +21,6 @@ class CommandServer(threading.Thread):
 	def __init__(self, modem_object):
 		self._modem = modem_object
 		self._command_queue = Queue.Queue() 
-		self._text_writer = textwriter.TextWriter('/usr/share/fonts/truetype/freefont/FreeSansBold.ttf', 15, 
-												'/home/pi/rpi-rgb-led-matrix/runtext16.ppm')
 		threading.Thread.__init__(self)
 		self.daemon = True
 		defaults = {'text': 'ictronics', 'color':'w', 'pin':'1234', 'chkpulsa':'*888#'}
@@ -34,6 +32,8 @@ class CommandServer(threading.Thread):
 			self._config.add_section('system')
 		with open('app.cfg', 'wb') as configfile:
 			self._config.write(configfile)
+		self._text_writer = textwriter.TextWriter(self._config.get('ledmatrix', 'fontfile'), int(self._config.get('ledmatrix', 'fontsize')), 
+												self._config.get('ledmatrix', 'imagefile'))
 		self._current_text = self._config.get('ledmatrix', 'text')
 		self._current_color = self._config.get('ledmatrix', 'color')
 		self._pin_code = self._config.get('system', 'pin')
