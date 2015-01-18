@@ -43,7 +43,8 @@ class CommandServer(threading.Thread):
 			color = CommandServer._color_dict[self._current_color]
 		else:
 			color = (255, 0, 0)
-		self._text_writer.write_text(self._current_text, color, -1)
+		display_text = self._current_text.replace('\n', 25*' ')
+		self._text_writer.write_text(display_text, color, -1)
 		
 	def _write_config(self, section, key, value):
 		if not self._config.has_section(section):
@@ -80,7 +81,8 @@ class CommandServer(threading.Thread):
 			
 			self._current_color = color_command
 			self._current_text = data.lstrip()
-			self._text_writer.write_text(self._current_text, color, -1)
+			display_text = self._current_text.replace('\n', 25*' ')
+			self._text_writer.write_text(display_text, color, -1)
 			self._write_config('ledmatrix', 'text', self._current_text)
 			self._write_config('ledmatrix', 'color', self._current_color)
 			return (self._current_color + '#' + self._current_text)

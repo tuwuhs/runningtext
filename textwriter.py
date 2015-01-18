@@ -24,7 +24,7 @@ class TextWriter(object):
 		 
 		width, ignore = self._font.getsize(all_text)
 
-		im = Image.new("RGB", (width + 30, 16), "black")
+		im = Image.new("RGB", (width + 100, 16), "black")
 		draw = ImageDraw.Draw(im)
 		 
 		x = 0
