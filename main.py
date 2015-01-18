@@ -70,10 +70,10 @@ def main():
 		sn = config.get('system', 'sn')
 		if sn != getserial():
 			print('SN mismatch')
-			exit()
+			return
 	except ConfigParser.NoOptionError:
 		print('SN not found')
-		exit()
+		return
 	
 	modem_port = config.get('modem', 'port')
 	
