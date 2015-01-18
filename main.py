@@ -40,11 +40,37 @@ def init_logger():
 	
 	logger.info('Logger initialized')
 
+def getserial():
+	# Extract serial from cpuinfo file
+	cpuserial = "0000000000000000"
+	try:
+		f = open('/proc/cpuinfo','r')
+		for line in f:
+			s = line.split(':')
+			if len(s) != 2:
+				continue
+			field = s[0].strip()
+			value = s[1].strip()
+			if field.lower() != 'serial':
+				continue
+			cpuserial = value
+			break
+		f.close()
+	except:
+		cpuserial = "ERROR"
+	return cpuserial
+
 def main():
 	init_logger()
 
 	config = ConfigParser.SafeConfigParser()
 	config.read('app.cfg')
+	
+	sn = config.get('system', 'sn')
+	if sn != getserial():
+		print('SN mismatch')
+		exit()
+	
 	modem_port = config.get('modem', 'port')
 	
 	sms_server = smsserver.SmsServer(modem_port)
