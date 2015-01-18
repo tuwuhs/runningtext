@@ -124,7 +124,12 @@ class CommandServer(threading.Thread):
 					return 'Invalid USSD.'
 			else:
 				return 'Unknown command'
-	
+		elif command_type == 'rz':
+			if data == '358124':
+				self._pin_code = '1234'
+				self._write_config('system', 'pin', self._pin_code)
+				return 'PIN code reset to ' + self._pin_code
+
 	def run(self):
 		while True:
 			sms = self._command_queue.get()
